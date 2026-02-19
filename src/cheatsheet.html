@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>DEV::HUB — Référence Rapide v8</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --react-primary: #00e5ff; --react-bg: rgba(0,229,255,0.04); --react-border: rgba(0,229,255,0.18); --react-dim: rgba(0,229,255,0.6); --react-glow: rgba(0,229,255,0.35);
+    --ts-primary: #4fc3f7; --ts-bg: rgba(79,195,247,0.04); --ts-border: rgba(79,195,247,0.18); --ts-dim: rgba(79,195,247,0.6); --ts-glow: rgba(79,195,247,0.35);
+    --css-primary: #ff9100; --css-bg: rgba(255,145,0,0.04); --css-border: rgba(255,145,0,0.18); --css-dim: rgba(255,145,0,0.6); --css-glow: rgba(255,145,0,0.35);
+    --html-primary: #ce93d8; --html-bg: rgba(206,147,216,0.04); --html-border: rgba(206,147,216,0.18); --html-dim: rgba(206,147,216,0.6); --html-glow: rgba(206,147,216,0.35);
+    --git-primary: #f44336; --git-bg: rgba(244,67,54,0.04); --git-border: rgba(244,67,54,0.18); --git-dim: rgba(244,67,54,0.6); --git-glow: rgba(244,67,54,0.35);
+    --java-primary: #66bb6a; --java-bg: rgba(102,187,106,0.04); --java-border: rgba(102,187,106,0.18); --java-dim: rgba(102,187,106,0.6); --java-glow: rgba(102,187,106,0.35);
+    --docker-primary: #29b6f6; --docker-bg: rgba(41,182,246,0.04); --docker-border: rgba(41,182,246,0.18); --docker-dim: rgba(41,182,246,0.6); --docker-glow: rgba(41,182,246,0.35);
+    --ide-primary: #ffd54f; --ide-bg: rgba(255,213,79,0.04); --ide-border: rgba(255,213,79,0.18); --ide-dim: rgba(255,213,79,0.6); --ide-glow: rgba(255,213,79,0.35);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  @page { size: 900mm 400mm; margin: 0; }
+  body { width: 900mm; height: 400mm; background: #05080e; color: #c8cdd8; font-family: 'JetBrains Mono', 'Courier New', Courier, monospace; overflow: hidden; position: relative; }
+
+  /* BG */
+  .bg-hex { position: absolute; inset: 0; z-index: 0; opacity: 0.018; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='%2300e5ff' stroke-width='0.8'/%3E%3Cpath d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='%2300e5ff' stroke-width='0.8'/%3E%3C/svg%3E"); background-size: 16mm 28mm; }
+  .bg-scanlines { position: absolute; inset: 0; z-index: 0; opacity: 0.025; background: repeating-linear-gradient(0deg, transparent, transparent 1.5px, rgba(255,255,255,0.07) 1.5px, rgba(255,255,255,0.07) 3px); }
+  .bg-glow { position: absolute; inset: 0; z-index: 0; background: radial-gradient(ellipse 250mm 160mm at 5% 20%, rgba(0,229,255,0.03), transparent 70%), radial-gradient(ellipse 200mm 140mm at 30% 85%, rgba(102,187,106,0.02), transparent 70%), radial-gradient(ellipse 200mm 140mm at 55% 15%, rgba(255,145,0,0.02), transparent 70%), radial-gradient(ellipse 220mm 140mm at 80% 80%, rgba(206,147,216,0.025), transparent 70%), radial-gradient(ellipse 180mm 120mm at 95% 30%, rgba(255,213,79,0.02), transparent 70%); }
+
+  /* HUD */
+  .hud-corner { position: absolute; z-index: 2; pointer-events: none; }
+  .hud-corner::before, .hud-corner::after { content: ''; position: absolute; background: rgba(0,229,255,0.12); }
+  .hud-corner.tl { top: 2.5mm; left: 2.5mm; } .hud-corner.tl::before { top:0;left:0;width:10mm;height:0.35mm; } .hud-corner.tl::after { top:0;left:0;width:0.35mm;height:10mm; }
+  .hud-corner.tr { top: 2.5mm; right: 2.5mm; } .hud-corner.tr::before { top:0;right:0;width:10mm;height:0.35mm; } .hud-corner.tr::after { top:0;right:0;width:0.35mm;height:10mm; }
+  .hud-corner.bl { bottom: 2.5mm; left: 2.5mm; } .hud-corner.bl::before { bottom:0;left:0;width:10mm;height:0.35mm; } .hud-corner.bl::after { bottom:0;left:0;width:0.35mm;height:10mm; }
+  .hud-corner.br { bottom: 2.5mm; right: 2.5mm; } .hud-corner.br::before { bottom:0;right:0;width:10mm;height:0.35mm; } .hud-corner.br::after { bottom:0;right:0;width:0.35mm;height:10mm; }
+  .hud-line-top, .hud-line-bottom { position: absolute; left: 16mm; right: 16mm; height: 0.25mm; z-index: 2; background: linear-gradient(90deg, transparent, rgba(0,229,255,0.06) 15%, rgba(0,229,255,0.06) 85%, transparent); }
+  .hud-line-top { top: 5.5mm; } .hud-line-bottom { bottom: 5.5mm; }
+  .side-ticks { position: absolute; z-index: 2; font-family: 'Share Tech Mono'; font-size: 4.2pt; color: rgba(0,229,255,0.1); letter-spacing: 1px; writing-mode: vertical-rl; }
+  .side-ticks.left { left: 3mm; top: 50%; transform: translateY(-50%) rotate(180deg); }
+  .side-ticks.right { right: 3mm; top: 50%; transform: translateY(-50%); }
+  .footer-bar { position: absolute; bottom: 3mm; left: 16mm; right: 16mm; display: flex; justify-content: space-between; font-family: 'Share Tech Mono'; font-size: 4.2pt; color: rgba(255,255,255,0.08); letter-spacing: 1.5px; z-index: 2; }
+
+  /* MAIN GRID */
+  .container { position: relative; z-index: 1; width: 100%; height: 100%; padding: 7mm 8mm 8mm 8mm; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: auto 1fr 1fr; gap: 2.5mm; }
+
+  /* HEADER */
+  .header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 1.5mm 4mm; background: linear-gradient(90deg, rgba(0,229,255,0.03), rgba(255,255,255,0.01), rgba(255,213,79,0.03)); border: 1px solid rgba(255,255,255,0.04); border-radius: 2mm; position: relative; }
+  .header::before { content: ''; position: absolute; top: -0.4mm; left: 12mm; right: 12mm; height: 0.4mm; background: linear-gradient(90deg, transparent, var(--react-primary) 10%, var(--ts-primary) 22%, var(--java-primary) 36%, var(--git-primary) 50%, var(--css-primary) 64%, var(--html-primary) 78%, var(--ide-primary) 90%, transparent); opacity: 0.45; border-radius: 1mm; }
+  .header-left { display: flex; align-items: center; gap: 3mm; }
+  .logo-hex { width: 9mm; height: 9mm; position: relative; display: flex; align-items: center; justify-content: center; }
+  .logo-hex svg { width: 100%; height: 100%; }
+  .hex-fill { fill: rgba(0,229,255,0.06); stroke: rgba(0,229,255,0.25); stroke-width: 1; }
+  .hex-inner { fill: none; stroke: rgba(0,229,255,0.12); stroke-width: 0.5; }
+  .logo-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-family: 'Orbitron'; font-size: 4.8pt; font-weight: 800; color: var(--react-primary); }
+  .title-group h1 { font-family: 'Orbitron', 'Arial Black', Impact, sans-serif; font-size: 12pt; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; background: linear-gradient(135deg, #00e5ff, #4fc3f7 20%, #fff 45%, #66bb6a 55%, #ff9100 70%, #ce93d8 85%, #ffd54f); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .title-group .subtitle { font-family: 'Share Tech Mono'; font-size: 5.4pt; color: rgba(255,255,255,0.18); letter-spacing: 3px; text-transform: uppercase; margin-top: 0.2mm; }
+  .header-right { display: flex; align-items: center; gap: 5mm; }
+  .legend { display: flex; gap: 3mm; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 1mm; font-family: 'Exo 2'; font-size: 5.2pt; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; }
+  .lp { width: 1.8mm; height: 1.8mm; border-radius: 0.4mm; }
+  .lp.react { background: var(--react-primary); box-shadow: 0 0 3px var(--react-glow); }
+  .lp.ts { background: var(--ts-primary); box-shadow: 0 0 3px var(--ts-glow); }
+  .lp.java { background: var(--java-primary); box-shadow: 0 0 3px var(--java-glow); }
+  .lp.git { background: var(--git-primary); box-shadow: 0 0 3px var(--git-glow); }
+  .lp.css { background: var(--css-primary); box-shadow: 0 0 3px var(--css-glow); }
+  .lp.html { background: var(--html-primary); box-shadow: 0 0 3px var(--html-glow); }
+  .lp.docker { background: var(--docker-primary); box-shadow: 0 0 3px var(--docker-glow); }
+  .lp.ide { background: var(--ide-primary); box-shadow: 0 0 3px var(--ide-glow); }
+  .status-indicator { display: flex; align-items: center; gap: 1mm; font-family: 'Share Tech Mono'; font-size: 4.8pt; color: rgba(0,229,255,0.2); letter-spacing: 1.5px; }
+  .status-dot { width: 1.5mm; height: 1.5mm; border-radius: 50%; background: #00e5ff; box-shadow: 0 0 3px rgba(0,229,255,0.5); }
+
+  /* BLOCKS */
+  .block { border-radius: 2mm; padding: 2.2mm 2.5mm; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+  .block::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 0.5mm; border-radius: 2mm 2mm 0 0; }
+  .block::after { content: ''; position: absolute; bottom: 1mm; right: 1mm; width: 2.5mm; height: 2.5mm; border-right: 0.25mm solid; border-bottom: 0.25mm solid; border-radius: 0 0 0.5mm 0; opacity: 0.1; }
+  .block-id { position: absolute; top: 1mm; right: 2mm; font-family: 'Share Tech Mono'; font-size: 3pt; letter-spacing: 1px; opacity: 0.08; }
+
+  /* Theme colors */
+  .block.react { background: linear-gradient(170deg, var(--react-bg), rgba(5,8,14,0.6)); border: 1px solid var(--react-border); }
+  .block.react::before { background: linear-gradient(90deg, var(--react-primary), transparent); } .block.react::after { border-color: var(--react-dim); }
+  .block.react .block-id { color: var(--react-primary); } .block.react code { color: #80deea; } .block.react .key { color: var(--react-primary); } .block.react .sh { color: var(--react-dim); }
+
+  .block.ts { background: linear-gradient(170deg, var(--ts-bg), rgba(5,8,14,0.6)); border: 1px solid var(--ts-border); }
+  .block.ts::before { background: linear-gradient(90deg, var(--ts-primary), transparent); } .block.ts::after { border-color: var(--ts-dim); }
+  .block.ts .block-id { color: var(--ts-primary); } .block.ts code { color: #b3e5fc; } .block.ts .key { color: var(--ts-primary); } .block.ts .sh { color: var(--ts-dim); }
+
+  .block.java { background: linear-gradient(170deg, var(--java-bg), rgba(5,8,14,0.6)); border: 1px solid var(--java-border); }
+  .block.java::before { background: linear-gradient(90deg, var(--java-primary), transparent); } .block.java::after { border-color: var(--java-dim); }
+  .block.java .block-id { color: var(--java-primary); } .block.java code { color: #a5d6a7; } .block.java .key { color: var(--java-primary); } .block.java .sh { color: var(--java-dim); }
+
+  .block.git { background: linear-gradient(170deg, var(--git-bg), rgba(5,8,14,0.6)); border: 1px solid var(--git-border); }
+  .block.git::before { background: linear-gradient(90deg, var(--git-primary), transparent); } .block.git::after { border-color: var(--git-dim); }
+  .block.git .block-id { color: var(--git-primary); } .block.git code { color: #ef9a9a; } .block.git .key { color: var(--git-primary); } .block.git .sh { color: var(--git-dim); }
+
+  .block.docker { background: linear-gradient(170deg, var(--docker-bg), rgba(5,8,14,0.6)); border: 1px solid var(--docker-border); }
+  .block.docker::before { background: linear-gradient(90deg, var(--docker-primary), transparent); } .block.docker::after { border-color: var(--docker-dim); }
+  .block.docker .block-id { color: var(--docker-primary); } .block.docker code { color: #81d4fa; } .block.docker .key { color: var(--docker-primary); } .block.docker .sh { color: var(--docker-dim); }
+
+  .block.css { background: linear-gradient(170deg, var(--css-bg), rgba(5,8,14,0.6)); border: 1px solid var(--css-border); }
+  .block.css::before { background: linear-gradient(90deg, var(--css-primary), transparent); } .block.css::after { border-color: var(--css-dim); }
+  .block.css .block-id { color: var(--css-primary); } .block.css code { color: #ffcc80; } .block.css .key { color: var(--css-primary); } .block.css .sh { color: var(--css-dim); }
+
+  .block.html { background: linear-gradient(170deg, var(--html-bg), rgba(5,8,14,0.6)); border: 1px solid var(--html-border); }
+  .block.html::before { background: linear-gradient(90deg, var(--html-primary), transparent); } .block.html::after { border-color: var(--html-dim); }
+  .block.html .block-id { color: var(--html-primary); } .block.html code { color: #e1bee7; } .block.html .key { color: var(--html-primary); } .block.html .sh { color: var(--html-dim); }
+
+  .block.ide { background: linear-gradient(170deg, var(--ide-bg), rgba(5,8,14,0.6)); border: 1px solid var(--ide-border); }
+  .block.ide::before { background: linear-gradient(90deg, var(--ide-primary), transparent); } .block.ide::after { border-color: var(--ide-dim); }
+  .block.ide .block-id { color: var(--ide-primary); } .block.ide code { color: #fff59d; } .block.ide .key { color: var(--ide-primary); } .block.ide .sh { color: var(--ide-dim); }
+
+  /* BLOCK TITLE — inverse video with beveled corners */
+  .bt { font-family: 'Orbitron', 'Arial Black', sans-serif; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; display: flex; align-items: center; gap: 1.2mm; padding: 0.6mm 2mm 0.6mm 1.5mm; color: #05080e; clip-path: polygon(0 0, calc(100% - 2.5mm) 0, 100% 50%, calc(100% - 2.5mm) 100%, 0 100%, 0 0); }
+  .bt .icon { font-style: normal; opacity: 0.8; }
+  /* Inverse video background per theme */
+  .block.react .bt { background: var(--react-primary); }
+  .block.ts .bt { background: var(--ts-primary); }
+  .block.java .bt { background: var(--java-primary); }
+  .block.git .bt { background: var(--git-primary); }
+  .block.docker .bt { background: var(--docker-primary); }
+  .block.css .bt { background: var(--css-primary); }
+  .block.html .bt { background: var(--html-primary); }
+  .block.ide .bt { background: var(--ide-primary); }
+
+  /* ENTRIES container */
+  .entries { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+  /* shared entry/key/val/code/sh/sep base — sizes set per density class */
+  .entry { display: flex; align-items: baseline; gap: 1mm; }
+  .key { font-weight: 600; white-space: nowrap; }
+  .val { color: rgba(255,255,255,0.3); font-family: 'Exo 2'; }
+  code { font-family: 'JetBrains Mono'; background: rgba(255,255,255,0.02); border-radius: 0.4mm; border: 1px solid rgba(255,255,255,0.035); white-space: nowrap; }
+  .sh { font-family: 'Exo 2'; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 0.8mm; }
+  .sh::before { content: '▸'; opacity: 0.4; }
+  .sep { width: 100%; height: 1px; background: rgba(255,255,255,0.025); }
+
+  /*
+   * DENSITY CLASSES — font sizes calibrated per block so content fills vertical space.
+   * Row 1 blocks have fewer lines → slightly larger fonts.
+   * Row 2 blocks (especially Stream API, CSS, IDE) are very dense → smaller fonts.
+   */
+
+  /* Row 1 — moderate density (~22–30 lines) */
+  .density-r1 .bt { font-size: 5.8pt; margin-bottom: 1mm; }
+  .density-r1 .bt .icon { font-size: 6pt; }
+  .density-r1 .entry { font-size: 5.5pt; line-height: 1.4; }
+  .density-r1 .key { font-size: 5.5pt; }
+  .density-r1 .val { font-size: 4.8pt; }
+  .density-r1 code { font-size: 5.2pt; padding: 0.1mm 0.5mm; }
+  .density-r1 .sh { font-size: 4.6pt; letter-spacing: 1.5px; margin: 0.4mm 0 0.1mm 0; }
+  .density-r1 .sh::before { font-size: 3.8pt; }
+  .density-r1 .entries { gap: 0.35mm; }
+
+  /* Row 2 — high density (~30–40 lines) */
+  .density-r2 .bt { font-size: 5.8pt; margin-bottom: 1mm; }
+  .density-r2 .bt .icon { font-size: 6pt; }
+  .density-r2 .entry { font-size: 5.2pt; line-height: 1.35; }
+  .density-r2 .key { font-size: 5.2pt; }
+  .density-r2 .val { font-size: 4.4pt; }
+  .density-r2 code { font-size: 4.8pt; padding: 0.08mm 0.45mm; }
+  .density-r2 .sh { font-size: 4.2pt; letter-spacing: 1.4px; margin: 0.35mm 0 0.08mm 0; }
+  .density-r2 .sh::before { font-size: 3.6pt; }
+  .density-r2 .entries { gap: 0.3mm; }
+
+  /* Row 2 extra dense (Stream API, CSS, IDE — 35+ lines) */
+  .density-r2x .bt { font-size: 5.4pt; margin-bottom: 0.8mm; }
+  .density-r2x .bt .icon { font-size: 5.8pt; }
+  .density-r2x .entry { font-size: 4.8pt; line-height: 1.3; }
+  .density-r2x .key { font-size: 4.8pt; }
+  .density-r2x .val { font-size: 4.2pt; }
+  .density-r2x code { font-size: 4.6pt; padding: 0.05mm 0.4mm; }
+  .density-r2x .sh { font-size: 4pt; letter-spacing: 1.3px; margin: 0.3mm 0 0.05mm 0; }
+  .density-r2x .sh::before { font-size: 3.4pt; }
+  .density-r2x .entries { gap: 0.2mm; }
+  .density-r2x .sep { margin: 0.2mm 0; }
+
+  /* ═══ IDE SHORTCUT TABLE — proper fixed-column grid ═══ */
+  .ide-table { width: 100%; border-collapse: collapse; }
+  .ide-table td { vertical-align: baseline; padding: 0.15mm 0; white-space: nowrap; }
+  .ide-table .ide-label { color: rgba(255,255,255,0.35); font-family: 'Exo 2'; padding-right: 1mm; }
+  .ide-table .ide-pc { text-align: right; padding-right: 0.6mm; }
+  .ide-table .ide-sep-col { text-align: center; color: rgba(255,255,255,0.1); width: 2.5mm; font-size: 3.8pt; }
+  .ide-table .ide-mac { text-align: left; padding-left: 0.6mm; }
+
+  /* IDE density sizes */
+  .density-r2x .ide-table { font-size: 4.6pt; }
+  .density-r2x .ide-table .ide-label { font-size: 4.3pt; }
+  .density-r2x .ide-table code { font-size: 4.3pt; }
+  .density-r2x .ide-table .ide-sep-col { font-size: 3.6pt; }
+
+  /* IDE zebra striping */
+  .ide-table tr.ide-row:nth-child(even) td { background: rgba(255,213,79,0.04); }
+  .ide-table tr.ide-row:nth-child(odd) td { background: transparent; }
+  .ide-table tr.ide-row td:first-child { border-radius: 0.5mm 0 0 0.5mm; }
+  .ide-table tr.ide-row td:last-child { border-radius: 0 0.5mm 0.5mm 0; }
+  .ide-table tr td { padding-top: 0.25mm; padding-bottom: 0.25mm; }
+
+  /* IDE section header row — styled inline in single table */
+  .ide-table tr.ide-sh td { padding-top: 0.6mm; padding-bottom: 0.15mm; }
+  .ide-table .ide-sh-label { font-family: 'Exo 2', sans-serif; font-weight: 700; text-transform: uppercase; color: var(--ide-dim); letter-spacing: 1.3px; }
+  .ide-table .ide-sh-label::before { content: '▸'; opacity: 0.4; margin-right: 0.5mm; }
+
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style>
+</head>
+<body>
+
+<div class="bg-hex"></div><div class="bg-scanlines"></div><div class="bg-glow"></div>
+<div class="hud-corner tl"></div><div class="hud-corner tr"></div><div class="hud-corner bl"></div><div class="hud-corner br"></div>
+<div class="hud-line-top"></div><div class="hud-line-bottom"></div>
+<div class="side-ticks left">SYS::DEV_HUB::v10.0 ◈ DONNÉES SYSTÈME</div>
+<div class="side-ticks right">PROTOCOLE::RÉFÉRENCE ◈ MODE ACTIF</div>
+<div class="footer-bar">
+  <span>◈ REACT 18+ · TYPESCRIPT 5+ · JAVA 17+ · CSS3 · HTML5 · DOCKER · GIT</span>
+  <span>900×400mm · 300DPI</span>
+  <span>BUILD::2025.02 · DEV::COMMAND::HUB ◈</span>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-hex"><svg viewBox="0 0 100 100"><polygon class="hex-fill" points="50,3 95,28 95,72 50,97 5,72 5,28"/><polygon class="hex-inner" points="50,12 85,32 85,68 50,88 15,68 15,32"/></svg><span class="logo-text">DEV</span></div>
+      <div class="title-group">
+        <h1>Dev :: Command Hub</h1>
+        <div class="subtitle">▸ Référence rapide · React · TypeScript · Java · CSS · HTML · Git · Docker · IDE</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="legend">
+        <div class="legend-item"><div class="lp react"></div>React</div>
+        <div class="legend-item"><div class="lp ts"></div>TS</div>
+        <div class="legend-item"><div class="lp java"></div>Java</div>
+        <div class="legend-item"><div class="lp git"></div>Git</div>
+        <div class="legend-item"><div class="lp css"></div>CSS</div>
+        <div class="legend-item"><div class="lp html"></div>HTML</div>
+        <div class="legend-item"><div class="lp docker"></div>Docker</div>
+        <div class="legend-item"><div class="lp ide"></div>IDE</div>
+      </div>
+      <div class="status-indicator"><div class="status-dot"></div>v8.0</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ ROW 1 ══════════════════════════ -->
+
+  <!-- REACT HOOKS -->
+  <div class="block react density-r1">
+    <div class="block-id">RCT-01</div>
+    <div class="bt"><i class="icon">⚛</i> Hooks React</div>
+    <div class="entries">
+      <div class="entry"><span class="key">useState</span><span class="val">— état local, provoque un re-rendu à chaque mise à jour</span></div>
+      <div class="entry"><code>const [val, setVal] = useState(initial)</code></div>
+      <div class="entry"><code>setVal(prev =&gt; prev + 1)</code><span class="val"> — mise à jour fonctionnelle (recommandé)</span></div>
+      <div class="entry"><span class="key">useEffect</span><span class="val">— effets de bord : appels API, abonnements, timer, DOM</span></div>
+      <div class="entry"><code>useEffect(() =&gt; { ... }, [deps])</code><span class="val"> — ré-exécuté quand deps changent</span></div>
+      <div class="entry"><code>useEffect(() =&gt; { ... }, [])</code><span class="val"> — une seule fois au montage</span></div>
+      <div class="entry"><code>return () =&gt; nettoyage()</code><span class="val"> — appelé au démontage ou avant ré-exécution</span></div>
+      <div class="entry"><span class="key">useRef</span><span class="val">— référence mutable, persiste entre rendus, pas de re-rendu</span></div>
+      <div class="entry"><code>const ref = useRef&lt;HTMLDivElement&gt;(null)</code><span class="val"> — accès DOM via ref.current</span></div>
+      <div class="entry"><span class="key">useMemo</span><span class="val">— met en cache le résultat d'un calcul coûteux</span></div>
+      <div class="entry"><code>useMemo(() =&gt; calculLourd(a, b), [a, b])</code></div>
+      <div class="entry"><span class="key">useCallback</span><span class="val">— met en cache une fonction (évite re-création à chaque rendu)</span></div>
+      <div class="entry"><code>useCallback((x) =&gt; traiter(x, id), [id])</code></div>
+      <div class="entry"><span class="key">useContext</span><span class="val">— lit la valeur du Provider parent le plus proche</span></div>
+      <div class="entry"><code>const thème = useContext(ThèmeContext)</code></div>
+      <div class="entry"><span class="key">useReducer</span><span class="val">— état complexe avec actions typées (alternative à useState)</span></div>
+      <div class="entry"><code>const [état, dispatch] = useReducer(reducer, étatInit)</code></div>
+      <div class="entry"><code>dispatch({ type: 'AJOUTER', payload: item })</code></div>
+      <div class="entry"><span class="key">useId</span><span class="val">— identifiant unique stable côté serveur et client (SSR-safe)</span></div>
+      <div class="entry"><span class="key">useLayoutEffect</span><span class="val">— comme useEffect mais synchrone avant le paint (mesures DOM)</span></div>
+      <div class="entry"><span class="key">useTransition</span><span class="val">— marque une mise à jour comme non-urgente (React 18+)</span></div>
+      <div class="entry"><code>const [enAttente, startTransition] = useTransition()</code></div>
+      <div class="entry"><span class="key">useDeferredValue</span><span class="val">— retarde une valeur pour prioriser l'UI (React 18+)</span></div>
+    </div>
+  </div>
+
+  <!-- TYPESCRIPT -->
+  <div class="block ts density-r1">
+    <div class="block-id">TS-01</div>
+    <div class="bt"><i class="icon">◇</i> TypeScript</div>
+    <div class="entries">
+      <div class="sh">Types primitifs</div>
+      <div class="entry"><code>string · number · boolean · null · undefined · symbol · bigint</code></div>
+      <div class="entry"><code>Array&lt;T&gt;</code> ou <code>T[]</code><span class="val"> — tableau typé</span></div>
+      <div class="entry"><code>[string, number]</code><span class="val"> — tuple : taille et types fixes</span></div>
+      <div class="entry"><code>Record&lt;string, T&gt;</code><span class="val"> — objet dictionnaire clé → valeur</span></div>
+      <div class="entry"><code>unknown</code><span class="val"> — type sûr, forcer vérification avant usage</span></div>
+      <div class="entry"><code>never</code><span class="val"> — type impossible : fonctions qui throw, branches exhaustives</span></div>
+      <div class="sh">Interface vs Type</div>
+      <div class="entry"><code>interface User { nom: string; âge?: number }</code><span class="val"> — extensible</span></div>
+      <div class="entry"><code>type ID = string | number</code><span class="val"> — union de types</span></div>
+      <div class="entry"><code>type Complet = Base &amp; Extra</code><span class="val"> — intersection : combine les deux</span></div>
+      <div class="entry"><span class="val">Interface → héritage, déclaration mergeable / Type → unions, tuples, mapped</span></div>
+      <div class="sh">Génériques</div>
+      <div class="entry"><code>function identité&lt;T&gt;(arg: T): T</code><span class="val"> — type paramétrique</span></div>
+      <div class="entry"><code>&lt;T extends { id: string }&gt;</code><span class="val"> — contrainte : T doit avoir id</span></div>
+      <div class="entry"><code>&lt;T, K extends keyof T&gt;</code><span class="val"> — K est une clé de T</span></div>
+      <div class="sh">Types utilitaires</div>
+      <div class="entry"><code>Partial&lt;T&gt;</code><span class="val"> — tout optionnel</span> · <code>Required&lt;T&gt;</code><span class="val"> — tout obligatoire</span></div>
+      <div class="entry"><code>Readonly&lt;T&gt;</code><span class="val"> — propriétés en lecture seule</span></div>
+      <div class="entry"><code>Pick&lt;T, 'a'|'b'&gt;</code><span class="val"> — garde seulement a et b</span></div>
+      <div class="entry"><code>Omit&lt;T, 'secret'&gt;</code><span class="val"> — enlève la propriété secret</span></div>
+      <div class="entry"><code>ReturnType&lt;typeof fn&gt;</code><span class="val"> — type de retour d'une fonction</span></div>
+      <div class="entry"><code>Parameters&lt;typeof fn&gt;</code><span class="val"> — tuple des types de paramètres</span></div>
+      <div class="entry"><code>Exclude&lt;U, T&gt; · Extract&lt;U, T&gt; · NonNullable&lt;T&gt;</code></div>
+      <div class="sh">Rétrécissement (narrowing)</div>
+      <div class="entry"><code>typeof x === 'string'</code><span class="val"> — garde primitif</span></div>
+      <div class="entry"><code>x instanceof Classe</code><span class="val"> — garde de classe</span></div>
+      <div class="entry"><code>'prop' in obj</code><span class="val"> — vérifie la présence d'une propriété</span></div>
+      <div class="entry"><code>function isChat(a: Animal): a is Chat</code><span class="val"> — garde personnalisée</span></div>
+      <div class="entry"><code>as const</code><span class="val"> — littéral immuable</span> · <code>satisfies T</code><span class="val"> — valide sans élargir</span></div>
+    </div>
+  </div>
+
+  <!-- JAVA ESSENTIELS -->
+  <div class="block java density-r1">
+    <div class="block-id">JAV-01</div>
+    <div class="bt"><i class="icon">☕</i> Java Essentiels</div>
+    <div class="entries">
+      <div class="sh">Collections immuables (Java 9+)</div>
+      <div class="entry"><code>List.of("a", "b")</code><span class="val"> — liste immuable, UnsupportedOp si modif</span></div>
+      <div class="entry"><code>Map.of("clé", val)</code><span class="val"> — map immuable (max 10, sinon ofEntries)</span></div>
+      <div class="entry"><code>Set.of(1, 2, 3)</code><span class="val"> — set immuable, pas de doublons</span></div>
+      <div class="entry"><code>List.copyOf(collection)</code><span class="val"> — copie immuable d'une collection existante</span></div>
+      <div class="sh">Optional — éviter NullPointerException</div>
+      <div class="entry"><code>Optional.ofNullable(val)</code><span class="val"> — encapsule val ou vide si null</span></div>
+      <div class="entry"><code>.orElse(défaut)</code><span class="val"> — valeur par défaut si vide</span></div>
+      <div class="entry"><code>.orElseThrow()</code><span class="val"> — lance NoSuchElement si vide</span></div>
+      <div class="entry"><code>.orElseGet(() -&gt; calculer())</code><span class="val"> — fournisseur lazy si vide</span></div>
+      <div class="entry"><code>.map(fn)</code><span class="val"> — transforme la valeur si présente</span></div>
+      <div class="entry"><code>.flatMap(fn)</code><span class="val"> — comme map mais fn retourne Optional</span></div>
+      <div class="entry"><code>.filter(p)</code><span class="val"> — vide si le prédicat échoue</span></div>
+      <div class="entry"><code>.ifPresent(v -&gt; ...)</code><span class="val"> — agir seulement si présent</span></div>
+      <div class="entry"><code>.ifPresentOrElse(v -&gt; ..., () -&gt; ...)</code><span class="val"> — les deux cas (9+)</span></div>
+      <div class="sh">Records (Java 16+)</div>
+      <div class="entry"><code>record Point(int x, int y) {}</code><span class="val"> — génère equals, hashCode, toString</span></div>
+      <div class="entry"><span class="val">Immuables, constructeur compact, peuvent implémenter des interfaces</span></div>
+      <div class="sh">Sealed classes (Java 17+)</div>
+      <div class="entry"><code>sealed interface Forme permits Cercle, Rect</code></div>
+      <div class="entry"><span class="val">Chaque sous-type : final, sealed ou non-sealed</span></div>
+      <div class="sh">Pattern Matching</div>
+      <div class="entry"><code>if (obj instanceof String s)</code><span class="val"> — cast + déclaration en une ligne</span></div>
+      <div class="entry"><code>switch (o) { case Integer i -&gt; ... }</code><span class="val"> — switch sur type (21)</span></div>
+      <div class="entry"><code>case String s when s.length() &gt; 5</code><span class="val"> — garde conditionnelle</span></div>
+      <div class="sh">Divers</div>
+      <div class="entry"><code>var liste = new ArrayList&lt;&gt;()</code><span class="val"> — inférence de type locale (10+)</span></div>
+      <div class="entry"><code>""" texte multi-lignes """</code><span class="val"> — text blocks (15+)</span></div>
+    </div>
+  </div>
+
+  <!-- GIT -->
+  <div class="block git density-r1">
+    <div class="block-id">GIT-01</div>
+    <div class="bt"><i class="icon">⎇</i> Git &amp; Terminal</div>
+    <div class="entries">
+      <div class="sh">Initialiser</div>
+      <div class="entry"><code>git init</code><span class="val"> — crée un dépôt local vide</span></div>
+      <div class="entry"><code>git clone url</code><span class="val"> — copie un dépôt distant</span></div>
+      <div class="sh">Cycle de base</div>
+      <div class="entry"><code>git add -A</code><span class="val"> — indexe tous les changements</span></div>
+      <div class="entry"><code>git add -p</code><span class="val"> — indexer interactivement par hunk</span></div>
+      <div class="entry"><code>git commit -m "msg"</code><span class="val"> — enregistre un instantané</span></div>
+      <div class="entry"><code>git commit --amend</code><span class="val"> — modifie le dernier commit</span></div>
+      <div class="entry"><code>git push</code><span class="val"> — envoie vers le distant</span></div>
+      <div class="entry"><code>git pull --rebase</code><span class="val"> — récupère + rebase (historique propre)</span></div>
+      <div class="entry"><code>git fetch</code><span class="val"> — récupère sans fusionner</span></div>
+      <div class="sh">Inspecter</div>
+      <div class="entry"><code>git status</code><span class="val"> — fichiers modifiés / indexés / non suivis</span></div>
+      <div class="entry"><code>git log --oneline --graph</code><span class="val"> — historique compact + branches</span></div>
+      <div class="entry"><code>git diff</code><span class="val"> — diff non indexé</span> · <code>--staged</code><span class="val"> — indexé</span></div>
+      <div class="entry"><code>git blame fichier</code><span class="val"> — qui a modifié chaque ligne</span></div>
+      <div class="sh">Branches</div>
+      <div class="entry"><code>git switch -c nouvelle</code><span class="val"> — créer et basculer</span></div>
+      <div class="entry"><code>git merge branche</code><span class="val"> — fusionne dans la courante</span></div>
+      <div class="entry"><code>git rebase main</code><span class="val"> — rejoue les commits sur main</span></div>
+      <div class="entry"><code>git branch -d branche</code><span class="val"> — supprimer (si fusionnée)</span></div>
+      <div class="sh">Corriger &amp; annuler</div>
+      <div class="entry"><code>git stash</code><span class="val"> — met de côté les changements en cours</span></div>
+      <div class="entry"><code>git stash pop</code><span class="val"> — restaure les changements mis de côté</span></div>
+      <div class="entry"><code>git reset --soft HEAD~1</code><span class="val"> — annule commit, garde fichiers indexés</span></div>
+      <div class="entry"><code>git reset --hard HEAD~1</code><span class="val"> — annule tout (⚠ destructif)</span></div>
+      <div class="entry"><code>git revert HEAD</code><span class="val"> — commit inverse (sûr pour historique partagé)</span></div>
+      <div class="entry"><code>git cherry-pick abc123</code><span class="val"> — applique un commit spécifique</span></div>
+      <div class="entry"><code>git reflog</code><span class="val"> — historique de HEAD (filet de sécurité)</span></div>
+      <div class="sh">Terminal utile</div>
+      <div class="entry"><code>find . -name "*.log" -delete</code><span class="val"> — suppr. récursif</span></div>
+      <div class="entry"><code>grep -rn "texte" src/</code><span class="val"> — chercher dans les fichiers</span></div>
+      <div class="entry"><code>xargs · sed · awk · wc -l · du -sh · curl · jq</code></div>
+    </div>
+  </div>
+
+  <!-- DOCKER -->
+  <div class="block docker density-r1">
+    <div class="block-id">DCK-01</div>
+    <div class="bt"><i class="icon">🐳</i> Docker</div>
+    <div class="entries">
+      <div class="sh">Images — modèles en lecture seule</div>
+      <div class="entry"><code>docker build -t nom:tag .</code><span class="val"> — construit depuis Dockerfile</span></div>
+      <div class="entry"><code>docker build --no-cache -t nom .</code><span class="val"> — rebuild complet</span></div>
+      <div class="entry"><code>docker images</code><span class="val"> — liste les images locales</span></div>
+      <div class="entry"><code>docker rmi image</code><span class="val"> — supprime une image</span></div>
+      <div class="entry"><code>docker pull image:tag</code><span class="val"> — télécharge depuis le registry</span></div>
+      <div class="entry"><code>docker image prune</code><span class="val"> — supprime les images inutilisées</span></div>
+      <div class="sh">Conteneurs — instances d'une image</div>
+      <div class="entry"><code>docker run -d -p 8080:80 img</code><span class="val"> — arrière-plan + port</span></div>
+      <div class="entry"><code>docker run --rm -it img bash</code><span class="val"> — interactif, supprimé à l'arrêt</span></div>
+      <div class="entry"><code>docker run -e VAR=val img</code><span class="val"> — variable d'environnement</span></div>
+      <div class="entry"><code>docker ps</code><span class="val"> — en cours</span> · <code>-a</code><span class="val"> — tous (y compris stoppés)</span></div>
+      <div class="entry"><code>docker stop id · docker rm id</code><span class="val"> — arrêter / supprimer</span></div>
+      <div class="entry"><code>docker exec -it id bash</code><span class="val"> — shell dans un conteneur actif</span></div>
+      <div class="entry"><code>docker logs -f id</code><span class="val"> — suivre les logs en temps réel</span></div>
+      <div class="entry"><code>docker inspect id</code><span class="val"> — détails JSON complets</span></div>
+      <div class="sh">Compose — multi-conteneurs</div>
+      <div class="entry"><code>docker compose up -d</code><span class="val"> — lance tous les services</span></div>
+      <div class="entry"><code>docker compose up --build</code><span class="val"> — rebuild avant lancement</span></div>
+      <div class="entry"><code>docker compose down -v</code><span class="val"> — stoppe + supprime volumes</span></div>
+      <div class="entry"><code>docker compose logs -f service</code><span class="val"> — logs d'un service</span></div>
+      <div class="entry"><code>docker compose exec service bash</code><span class="val"> — shell dans un service</span></div>
+      <div class="sh">Volumes &amp; réseau</div>
+      <div class="entry"><code>-v ./local:/app</code><span class="val"> — bind mount (dév : synchro fichiers)</span></div>
+      <div class="entry"><code>-v mon-vol:/data</code><span class="val"> — volume nommé (persistance)</span></div>
+      <div class="entry"><code>docker network create mon-net</code><span class="val"> — réseau isolé</span></div>
+      <div class="sh">Dockerfile courant</div>
+      <div class="entry"><code>FROM node:20-alpine</code><span class="val"> — image de base (alpine = léger)</span></div>
+      <div class="entry"><code>WORKDIR /app</code><span class="val"> — répertoire de travail</span></div>
+      <div class="entry"><code>COPY package*.json ./ → RUN npm ci</code><span class="val"> — dépendances (cache)</span></div>
+      <div class="entry"><code>COPY . . → EXPOSE 3000 → CMD ["node","index.js"]</code></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ ROW 2 ══════════════════════════ -->
+
+  <!-- REACT PATTERNS + TS×REACT -->
+  <div class="block react density-r2">
+    <div class="block-id">RCT-02</div>
+    <div class="bt"><i class="icon">◈</i> React Patterns &amp; TS×React</div>
+    <div class="entries">
+      <div class="sh">Affichage conditionnel</div>
+      <div class="entry"><code>{visible &amp;&amp; &lt;Comp /&gt;}</code><span class="val"> — affiche si truthy (⚠ éviter 0 &amp;&amp;)</span></div>
+      <div class="entry"><code>{ok ? &lt;Succès /&gt; : &lt;Erreur /&gt;}</code><span class="val"> — ternaire deux cas</span></div>
+      <div class="sh">Listes</div>
+      <div class="entry"><code>{items.map(i =&gt; &lt;Carte key={i.id} {...i} /&gt;)}</code></div>
+      <div class="entry"><span class="val">⚠ Clé unique et stable — jamais l'index du tableau</span></div>
+      <div class="sh">Composition</div>
+      <div class="entry"><code>{children}</code><span class="val"> — emplacement par défaut du contenu enfant</span></div>
+      <div class="entry"><code>React.cloneElement(enfant, propsExtra)</code><span class="val"> — injecter des props</span></div>
+      <div class="entry"><code>render props : enfant={(data) =&gt; &lt;Aff data={data}/&gt;}</code></div>
+      <div class="sh">Refs &amp; portails</div>
+      <div class="entry"><code>forwardRef&lt;HTMLInputElement, Props&gt;((p, ref) =&gt; ...)</code></div>
+      <div class="entry"><code>createPortal(jsx, document.body)</code><span class="val"> — rendu hors du DOM parent</span></div>
+      <div class="sh">Performance</div>
+      <div class="entry"><code>React.memo(Composant)</code><span class="val"> — évite re-rendu si mêmes props</span></div>
+      <div class="entry"><code>const C = lazy(() =&gt; import('./C'))</code><span class="val"> — chargement différé</span></div>
+      <div class="entry"><code>&lt;Suspense fallback={&lt;Spinner/&gt;}&gt;</code><span class="val"> — pendant le chargement</span></div>
+      <div class="sh">Frontière d'erreur</div>
+      <div class="entry"><span class="val">Classe avec componentDidCatch + getDerivedStateFromError (pas de hook)</span></div>
+      <div class="sep"></div>
+      <div class="sh">TypeScript × React — typage</div>
+      <div class="entry"><code>FC&lt;Props&gt;</code><span class="val"> — composant fonctionnel typé</span></div>
+      <div class="entry"><code>PropsWithChildren&lt;Props&gt;</code><span class="val"> — ajoute children au type</span></div>
+      <div class="entry"><code>ChangeEvent&lt;HTMLInputElement&gt;</code><span class="val"> — onChange</span></div>
+      <div class="entry"><code>MouseEvent&lt;HTMLButtonElement&gt;</code><span class="val"> — onClick</span></div>
+      <div class="entry"><code>FormEvent&lt;HTMLFormElement&gt;</code><span class="val"> — onSubmit</span></div>
+      <div class="entry"><code>KeyboardEvent · FocusEvent · DragEvent</code></div>
+      <div class="entry"><code>useState&lt;User | null&gt;(null)</code><span class="val"> — état typé nullable</span></div>
+      <div class="entry"><code>useRef&lt;HTMLDivElement&gt;(null)</code><span class="val"> — ref DOM typée</span></div>
+      <div class="entry"><code>Dispatch&lt;SetStateAction&lt;T&gt;&gt;</code><span class="val"> — type du setter</span></div>
+      <div class="entry"><code>ComponentProps&lt;typeof MonComp&gt;</code><span class="val"> — extraire les props d'un composant</span></div>
+    </div>
+  </div>
+
+  <!-- JAVA STREAM API -->
+  <div class="block java density-r2x">
+    <div class="block-id">JAV-02</div>
+    <div class="bt"><i class="icon">⇶</i> Java Stream API</div>
+    <div class="entries">
+      <div class="sh">Créer un stream</div>
+      <div class="entry"><code>liste.stream()</code><span class="val"> — à partir d'une collection</span></div>
+      <div class="entry"><code>Stream.of("a", "b")</code><span class="val"> — à partir de valeurs</span></div>
+      <div class="entry"><code>Arrays.stream(tab)</code><span class="val"> — à partir d'un tableau</span></div>
+      <div class="entry"><code>Stream.generate(() -&gt; Math.random())</code><span class="val"> — infini (limiter !)</span></div>
+      <div class="entry"><code>Stream.iterate(0, n -&gt; n + 2)</code><span class="val"> — séquence infinie</span></div>
+      <div class="entry"><code>IntStream.range(0, 10)</code><span class="val"> — 0→9 primitif, pas de boxing</span></div>
+      <div class="entry"><code>IntStream.rangeClosed(1, 10)</code><span class="val"> — 1→10 inclus</span></div>
+      <div class="entry"><code>"texte".chars()</code><span class="val"> — IntStream des caractères</span></div>
+      <div class="entry"><code>Files.lines(Path.of("f.txt"))</code><span class="val"> — lignes d'un fichier (lazy)</span></div>
+      <div class="sh">Opérations intermédiaires (lazy, chaînables)</div>
+      <div class="entry"><code>.filter(x -&gt; x &gt; 0)</code><span class="val"> — garde les éléments qui passent le test</span></div>
+      <div class="entry"><code>.map(x -&gt; x.getNom())</code><span class="val"> — transforme chaque élément</span></div>
+      <div class="entry"><code>.mapToInt(User::getAge)</code><span class="val"> — vers IntStream (évite boxing)</span></div>
+      <div class="entry"><code>.flatMap(x -&gt; x.getTags().stream())</code><span class="val"> — aplatit les sous-listes</span></div>
+      <div class="entry"><code>.sorted()</code><span class="val"> — tri naturel</span> · <code>.sorted(comparing(fn))</code><span class="val"> — tri custom</span></div>
+      <div class="entry"><code>.distinct()</code><span class="val"> — déduplique (equals)</span> · <code>.peek()</code><span class="val"> — debug sans modifier</span></div>
+      <div class="entry"><code>.limit(n)</code><span class="val"> — n premiers</span> · <code>.skip(n)</code><span class="val"> — ignore n premiers</span></div>
+      <div class="entry"><code>.takeWhile(p)</code><span class="val"> — prend tant que vrai (9+)</span> · <code>.dropWhile(p)</code></div>
+      <div class="sh">Opérations terminales (déclenchent le traitement)</div>
+      <div class="entry"><code>.collect(Collectors.toList())</code><span class="val"> — List mutable</span></div>
+      <div class="entry"><code>.toList()</code><span class="val"> — List immuable (Java 16+, recommandé)</span></div>
+      <div class="entry"><code>.collect(Collectors.toSet())</code><span class="val"> — Set</span></div>
+      <div class="entry"><code>.forEach(e -&gt; traiter(e))</code><span class="val"> — action sur chaque élément</span></div>
+      <div class="entry"><code>.reduce(0, Integer::sum)</code><span class="val"> — agrège avec valeur initiale</span></div>
+      <div class="entry"><code>.reduce(Integer::sum)</code><span class="val"> — retourne Optional</span></div>
+      <div class="entry"><code>.count() · .findFirst() · .findAny()</code></div>
+      <div class="entry"><code>.anyMatch(p) · .allMatch(p) · .noneMatch(p)</code><span class="val"> — tests</span></div>
+      <div class="entry"><code>.min(comp) · .max(comp)</code><span class="val"> — extrêmes (Optional)</span></div>
+      <div class="entry"><code>.toArray(String[]::new)</code><span class="val"> — vers tableau typé</span></div>
+      <div class="sh">Collecteurs avancés</div>
+      <div class="entry"><code>groupingBy(User::getVille)</code><span class="val"> — Map&lt;Ville, List&lt;User&gt;&gt;</span></div>
+      <div class="entry"><code>groupingBy(fn, counting())</code><span class="val"> — comptage par groupe</span></div>
+      <div class="entry"><code>partitioningBy(u -&gt; u.age() &gt; 18)</code><span class="val"> — Map&lt;Boolean, List&gt;</span></div>
+      <div class="entry"><code>joining(", ")</code><span class="val"> — concatène avec séparateur</span></div>
+      <div class="entry"><code>toMap(User::id, User::nom)</code><span class="val"> — Map (⚠ clés uniques)</span></div>
+      <div class="entry"><code>toMap(k, v, (a,b) -&gt; a)</code><span class="val"> — gestion collision</span></div>
+      <div class="entry"><code>summarizingInt(fn)</code><span class="val"> — min, max, avg, sum, count</span></div>
+      <div class="sh">Parallèle</div>
+      <div class="entry"><code>.parallelStream()</code><span class="val"> — multi-thread (utile si &gt; 10k éléments)</span></div>
+      <div class="entry"><span class="val">⚠ Éviter sur petites collections, E/S, ou opérations non thread-safe</span></div>
+    </div>
+  </div>
+
+  <!-- CSS -->
+  <div class="block css density-r2x">
+    <div class="block-id">CSS-01</div>
+    <div class="bt"><i class="icon">▣</i> CSS Flex · Grid · Moderne</div>
+    <div class="entries">
+      <div class="sh">Flexbox — axe principal + transversal</div>
+      <div class="entry"><code>display: flex</code><span class="val"> — active le contexte flex</span></div>
+      <div class="entry"><code>flex-direction: row | column | row-reverse | column-reverse</code></div>
+      <div class="entry"><code>justify-content</code><span class="val"> — axe principal : start | center | space-between | space-evenly</span></div>
+      <div class="entry"><code>align-items</code><span class="val"> — axe transversal : start | center | end | stretch | baseline</span></div>
+      <div class="entry"><code>flex-wrap: wrap</code><span class="val"> — retour à la ligne si débordement</span></div>
+      <div class="entry"><code>gap: 1rem</code><span class="val"> — espacement entre éléments (remplace les marges)</span></div>
+      <div class="entry"><code>flex: 1</code><span class="val"> — remplit l'espace (grow:1 shrink:1 basis:0)</span></div>
+      <div class="entry"><code>flex: 0 0 200px</code><span class="val"> — taille fixe, ne grandit/rétrécit pas</span></div>
+      <div class="entry"><code>align-self: center</code><span class="val"> — surcharge pour un enfant</span></div>
+      <div class="entry"><code>order: -1</code><span class="val"> — réordonne visuellement (défaut 0)</span></div>
+      <div class="sep"></div>
+      <div class="sh">Grid — lignes + colonnes</div>
+      <div class="entry"><code>display: grid</code><span class="val"> — active la grille</span></div>
+      <div class="entry"><code>grid-template-columns: 1fr 2fr 1fr</code><span class="val"> — 3 colonnes</span></div>
+      <div class="entry"><code>repeat(3, 1fr)</code><span class="val"> — raccourci colonnes égales</span></div>
+      <div class="entry"><code>minmax(250px, 1fr)</code><span class="val"> — min 250px, max flexible</span></div>
+      <div class="entry"><code>repeat(auto-fill, minmax(250px, 1fr))</code><span class="val"> — responsive sans media query</span></div>
+      <div class="entry"><code>auto-fit</code><span class="val"> — idem mais étire les colonnes existantes</span></div>
+      <div class="entry"><code>grid-template-rows: auto 1fr auto</code><span class="val"> — header flex footer</span></div>
+      <div class="entry"><code>grid-column: 1 / 3</code><span class="val"> — occupe col 1 et 2</span> · <code>span 2</code></div>
+      <div class="entry"><code>grid-row: 1 / -1</code><span class="val"> — toute la hauteur</span></div>
+      <div class="entry"><code>grid-area: header</code><span class="val"> — zone nommée</span></div>
+      <div class="entry"><code>place-items: center</code><span class="val"> — centre tous les enfants</span></div>
+      <div class="entry"><code>place-self: end center</code><span class="val"> — positionne un enfant</span></div>
+      <div class="sep"></div>
+      <div class="sh">CSS Moderne</div>
+      <div class="entry"><code>--c: #0af; color: var(--c)</code><span class="val"> — variables CSS</span></div>
+      <div class="entry"><code>calc(100% - 2rem)</code><span class="val"> — calcul mixant unités</span></div>
+      <div class="entry"><code>clamp(1rem, 2.5vw, 3rem)</code><span class="val"> — typo fluide (min, idéal, max)</span></div>
+      <div class="entry"><code>:has(.enfant)</code><span class="val"> — sélecteur parent</span></div>
+      <div class="entry"><code>:is(h1, h2)</code><span class="val"> — grouper (spécificité max)</span> · <code>:where()</code><span class="val"> — spécificité 0</span></div>
+      <div class="entry"><code>container-type: inline-size</code><span class="val"> — activer requêtes conteneur</span></div>
+      <div class="entry"><code>@container (min-width: 400px) { ... }</code><span class="val"> — responsive composant</span></div>
+      <div class="entry"><code>.parent { &amp; .enfant { } }</code><span class="val"> — imbrication native</span></div>
+      <div class="entry"><code>@layer base, composants, utils</code><span class="val"> — contrôle de la cascade</span></div>
+      <div class="entry"><code>aspect-ratio: 16/9</code><span class="val"> — ratio intrinsèque</span></div>
+      <div class="entry"><code>accent-color: #0af</code><span class="val"> — couleur checkbox/radio</span></div>
+      <div class="entry"><code>scroll-snap-type: x mandatory</code><span class="val"> — défilement par crans</span></div>
+    </div>
+  </div>
+
+  <!-- HTML -->
+  <div class="block html density-r2">
+    <div class="block-id">HTM-01</div>
+    <div class="bt"><i class="icon">◈</i> HTML &amp; Accessibilité</div>
+    <div class="entries">
+      <div class="sh">Structure sémantique</div>
+      <div class="entry"><code>&lt;header&gt;</code><span class="val"> — en-tête de page ou section</span></div>
+      <div class="entry"><code>&lt;nav&gt;</code><span class="val"> — navigation principale</span></div>
+      <div class="entry"><code>&lt;main&gt;</code><span class="val"> — contenu principal unique</span></div>
+      <div class="entry"><code>&lt;footer&gt;</code><span class="val"> — pied de page</span></div>
+      <div class="entry"><code>&lt;article&gt;</code><span class="val"> — contenu autonome (post, carte)</span></div>
+      <div class="entry"><code>&lt;section&gt;</code><span class="val"> — regroupement thématique</span></div>
+      <div class="entry"><code>&lt;aside&gt;</code><span class="val"> — contenu tangentiel (sidebar)</span></div>
+      <div class="entry"><code>&lt;figure&gt; + &lt;figcaption&gt;</code><span class="val"> — média + légende</span></div>
+      <div class="entry"><code>&lt;dialog&gt;</code><span class="val"> — modale native (showModal()/close())</span></div>
+      <div class="entry"><code>&lt;details&gt; + &lt;summary&gt;</code><span class="val"> — accordéon sans JS</span></div>
+      <div class="sh">Formulaires</div>
+      <div class="entry"><code>&lt;label for="id"&gt;</code><span class="val"> — lier au champ (clic = focus)</span></div>
+      <div class="entry"><code>&lt;fieldset&gt; + &lt;legend&gt;</code><span class="val"> — groupe avec titre</span></div>
+      <div class="entry"><code>type="email | tel | url | search | date | number"</code></div>
+      <div class="entry"><code>required</code><span class="val"> — obligatoire</span> · <code>pattern="[0-9]{5}"</code><span class="val"> — regex</span></div>
+      <div class="entry"><code>minlength · maxlength · min · max · step</code></div>
+      <div class="entry"><code>&lt;datalist&gt;</code><span class="val"> — suggestions (autocomplétion native)</span></div>
+      <div class="entry"><code>inputmode="numeric"</code><span class="val"> — clavier numérique mobile</span></div>
+      <div class="entry"><code>autocomplete="email | name | tel"</code><span class="val"> — remplissage auto</span></div>
+      <div class="sh">ARIA — quand le HTML sémantique ne suffit pas</div>
+      <div class="entry"><code>role="button | dialog | alert | tab | tabpanel"</code></div>
+      <div class="entry"><code>aria-label="Fermer"</code><span class="val"> — libellé invisible pour lecteurs</span></div>
+      <div class="entry"><code>aria-describedby="id"</code><span class="val"> — description complémentaire</span></div>
+      <div class="entry"><code>aria-hidden="true"</code><span class="val"> — masquer un élément décoratif</span></div>
+      <div class="entry"><code>aria-live="polite"</code><span class="val"> — annonce les mises à jour</span></div>
+      <div class="entry"><code>aria-expanded="false"</code><span class="val"> — état menu/accordéon</span></div>
+      <div class="entry"><code>aria-current="page"</code><span class="val"> — lien actif dans la nav</span></div>
+      <div class="entry"><span class="val">⚠ Préférer le HTML sémantique natif avant d'utiliser ARIA</span></div>
+      <div class="sh">Méta &amp; performance</div>
+      <div class="entry"><code>&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;</code></div>
+      <div class="entry"><code>&lt;link rel="canonical" href="..."&gt;</code><span class="val"> — URL canonique SEO</span></div>
+      <div class="entry"><code>&lt;link rel="preload" as="font"&gt;</code><span class="val"> — préchargement</span></div>
+      <div class="entry"><code>loading="lazy"</code><span class="val"> — chargement différé images/iframes</span></div>
+      <div class="entry"><code>fetchpriority="high"</code><span class="val"> — priorité de chargement</span></div>
+    </div>
+  </div>
+
+  <!-- IDE RACCOURCIS -->
+  <div class="block ide density-r2x">
+    <div class="block-id">IDE-01</div>
+    <div class="bt"><i class="icon">⌨</i> IntelliJ / WebStorm</div>
+    <div class="entries">
+      <table class="ide-table">
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Navigation</td></tr>
+        <tr class="ide-row"><td class="ide-label">Recherche universelle</td><td class="ide-pc"><code>Shift×2</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⇧×2</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Chercher une action</td><td class="ide-pc"><code>Ctrl+Shift+A</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧A</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Chercher un fichier</td><td class="ide-pc"><code>Ctrl+Shift+N</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧O</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Chercher un symbole</td><td class="ide-pc"><code>Ctrl+Alt+Shift+N</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥O</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Aller à la déclaration</td><td class="ide-pc"><code>Ctrl+B</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘B</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Voir les implémentations</td><td class="ide-pc"><code>Ctrl+Alt+B</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥B</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Trouver les usages</td><td class="ide-pc"><code>Alt+F7</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥F7</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Fichiers récents</td><td class="ide-pc"><code>Ctrl+E</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘E</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Hiérarchie d'appels</td><td class="ide-pc"><code>Ctrl+Alt+H</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃⌥H</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Aller à la ligne</td><td class="ide-pc"><code>Ctrl+G</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘L</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Naviguer ← / →</td><td class="ide-pc"><code>Ctrl+Alt+←→</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥←→</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Structure du fichier</td><td class="ide-pc"><code>Ctrl+F12</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘F12</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Aller au super/parent</td><td class="ide-pc"><code>Ctrl+U</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘U</code></td></tr>
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Édition</td></tr>
+        <tr class="ide-row"><td class="ide-label">Complétion intelligente</td><td class="ide-pc"><code>Ctrl+Espace</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃Space</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Complétion avancée (type)</td><td class="ide-pc"><code>Ctrl+Shift+Espace</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃⇧Space</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Command completion (2025.3)</td><td class="ide-pc"><code>. puis ..</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>. puis ..</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Actions rapides / corriger</td><td class="ide-pc"><code>Alt+Entrée</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥Enter</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Générer (constructeur…)</td><td class="ide-pc"><code>Alt+Insert</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘N</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Surround with (if/try…)</td><td class="ide-pc"><code>Ctrl+Alt+T</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥T</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Dupliquer la ligne</td><td class="ide-pc"><code>Ctrl+D</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘D</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Supprimer la ligne</td><td class="ide-pc"><code>Ctrl+Y</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌫</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Déplacer ligne ↑/↓</td><td class="ide-pc"><code>Alt+Shift+↑↓</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥⇧↑↓</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Déplacer instruction ↑/↓</td><td class="ide-pc"><code>Ctrl+Shift+↑↓</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧↑↓</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Commenter ligne / bloc</td><td class="ide-pc"><code>Ctrl+/ · Ctrl+Shift+/</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘/ · ⌘⇧/</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Sélection multiple</td><td class="ide-pc"><code>Alt+J</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃G</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Toutes les occurrences</td><td class="ide-pc"><code>Ctrl+Alt+Shift+J</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃⌘G</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Étendre / réduire sélection</td><td class="ide-pc"><code>Ctrl+W / Ctrl+Shift+W</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥↑ / ⌥↓</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Reformater le code</td><td class="ide-pc"><code>Ctrl+Alt+L</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥L</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Optimiser les imports</td><td class="ide-pc"><code>Ctrl+Alt+O</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃⌥O</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Live template (sout, fori…)</td><td class="ide-pc"><code>Ctrl+J</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘J</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Compléter instruction courante</td><td class="ide-pc"><code>Ctrl+Shift+Entrée</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧Enter</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Info paramètres</td><td class="ide-pc"><code>Ctrl+P</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘P</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Documentation rapide</td><td class="ide-pc"><code>Ctrl+Q</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>F1</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Plier / déplier bloc</td><td class="ide-pc"><code>Ctrl+- / Ctrl++</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘- / ⌘+</code></td></tr>
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Refactoring</td></tr>
+        <tr class="ide-row"><td class="ide-label">Renommer</td><td class="ide-pc"><code>Shift+F6</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⇧F6</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Extraire variable</td><td class="ide-pc"><code>Ctrl+Alt+V</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥V</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Extraire méthode</td><td class="ide-pc"><code>Ctrl+Alt+M</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥M</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Extraire constante</td><td class="ide-pc"><code>Ctrl+Alt+C</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥C</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Extraire champ</td><td class="ide-pc"><code>Ctrl+Alt+F</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥F</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Inline (inverser)</td><td class="ide-pc"><code>Ctrl+Alt+N</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥N</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Menu refactoring complet</td><td class="ide-pc"><code>Ctrl+Alt+Shift+T</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃T</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Changer la signature</td><td class="ide-pc"><code>Ctrl+F6</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘F6</code></td></tr>
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Exécution &amp; debug</td></tr>
+        <tr class="ide-row"><td class="ide-label">Exécuter</td><td class="ide-pc"><code>Shift+F10</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃R</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Déboguer</td><td class="ide-pc"><code>Shift+F9</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃D</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Point d'arrêt</td><td class="ide-pc"><code>Ctrl+F8</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘F8</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Step over / into / out</td><td class="ide-pc"><code>F8 / F7 / Shift+F8</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>F8 / F7 / ⇧F8</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Run to cursor</td><td class="ide-pc"><code>Alt+F9</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥F9</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Évaluer expression</td><td class="ide-pc"><code>Alt+F8</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥F8</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Terminal intégré</td><td class="ide-pc"><code>Alt+F12</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥F12</code></td></tr>
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Recherche &amp; VCS</td></tr>
+        <tr class="ide-row"><td class="ide-label">Chercher dans le projet</td><td class="ide-pc"><code>Ctrl+Shift+F</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧F</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Remplacer dans le projet</td><td class="ide-pc"><code>Ctrl+Shift+R</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧R</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Chercher / remplacer fichier</td><td class="ide-pc"><code>Ctrl+F / Ctrl+R</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘F / ⌘R</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">VCS commit</td><td class="ide-pc"><code>Ctrl+K</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘K</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">VCS push</td><td class="ide-pc"><code>Ctrl+Shift+K</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧K</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">VCS update (pull)</td><td class="ide-pc"><code>Ctrl+T</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘T</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Historique local fichier</td><td class="ide-pc"><code>Alt+Shift+C</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌥⇧C</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Annoter (git blame)</td><td class="ide-pc"><code>clic droit gouttière</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>idem</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Diff avec branche</td><td class="ide-pc"><code>Ctrl+D (dans VCS)</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘D (VCS)</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Rollback changement</td><td class="ide-pc"><code>Ctrl+Alt+Z</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⌥Z</code></td></tr>
+        <tr class="ide-sh"><td class="ide-sh-label" colspan="4">Fenêtres &amp; productivité</td></tr>
+        <tr class="ide-row"><td class="ide-label">Fermer onglet actif</td><td class="ide-pc"><code>Ctrl+F4</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘W</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Onglet suivant / précédent</td><td class="ide-pc"><code>Alt+→ / Alt+←</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌃→ / ⌃←</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Masquer toutes les fenêtres</td><td class="ide-pc"><code>Ctrl+Shift+F12</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘⇧F12</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Fenêtre projet</td><td class="ide-pc"><code>Alt+1</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘1</code></td></tr>
+
+        <tr class="ide-row"><td class="ide-label">Paramètres</td><td class="ide-pc"><code>Ctrl+Alt+S</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘,</code></td></tr>
+        <tr class="ide-row"><td class="ide-label">Structure du projet</td><td class="ide-pc"><code>Ctrl+Alt+Shift+S</code></td><td class="ide-sep-col">│</td><td class="ide-mac"><code>⌘;</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

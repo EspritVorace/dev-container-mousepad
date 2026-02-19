@@ -1,0 +1,19 @@
+{
+  "name": "dev-command-hub-exporter",
+  "version": "1.0.0",
+  "description": "Export Dev Command Hub cheatsheet (900×400mm) en haute résolution 300 DPI — PNG, JPEG, TIFF ou PDF",
+  "author": "Sébastien",
+  "license": "MIT",
+  "scripts": {
+    "export:png": "node src/export.js --format png",
+    "export:jpeg": "node src/export.js --format jpeg",
+    "export:tiff": "node src/export.js --format tiff",
+    "export:pdf": "node src/export.js --format pdf",
+    "export:all": "node src/export.js --format all",
+    "postinstall": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0",
+    "sharp": "^0.33.5"
+  }
+}
